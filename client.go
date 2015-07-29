@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"./config"
 	"./util"
-	"./console"
+	"./clientside/console"
 )
 
 func main(){
