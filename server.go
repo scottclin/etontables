@@ -51,7 +51,7 @@ func main(){
 }
 
 func checkForfile(){
-	watchdirchannel := make(chan util.Event, 5)
+	watchdirchannel := make(chan interface{}, 5)
 	result := false
 	if watchdirchannel != nil {
 		result = util.RegisterChannel("watchdirchannel", watchdirchannel)
@@ -102,7 +102,8 @@ func loadTorrentFile () {
 		return
 	}
 	for {
-		newfileevent := <- watchdirchannel
+		newevent := <- watchdirchannel
+		newfileevent := newevent.(util.Event)
 		fmt.Printf("An event was recieved: %s %s\n", newfileevent.Type, newfileevent.Message)
 		if newfileevent.Type != "new_torrent_file" {
 			continue
