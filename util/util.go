@@ -59,6 +59,7 @@ func CheckError(err error){
 	}
 }
 
+//Get the string I am looking for 
 func GetString(m map[string]interface{}, k string) string{
 	v,ok := m[k]
 	if ok {
@@ -70,6 +71,7 @@ func GetString(m map[string]interface{}, k string) string{
 	return ""
 }
 
+//Get the slice of strings I am looks for
 func GetSliceString(m map[string]interface{}, k string) (resultSlice [][]string){
 	v,ok := m[k]
 	if ok {
