@@ -17,6 +17,7 @@ import (
 	"bytes"
 )
 
+//Vars for things
 var seen_torrent_files map[string]bool
 var watch_dir string
 var watch_duration int
@@ -27,7 +28,8 @@ func main(){
 	seen_torrent_files = make(map[string]bool)
 	watch_dir = config.GetWatchDir()
 	watch_duration = config.GetWatchFrequency()
-	
+
+	//Threads for file stuff I think is it the right way to go
 	go checkForfile()
 	go loadTorrentFile()
 	fmt.Printf("Setup looking for files in %s\n", watch_dir)
@@ -50,12 +52,18 @@ func main(){
 	}
 }
 
+/**
+Checks the folder for new files based which folders? are sent in the watchdir channel or in the config.
+*/
 func checkForfile(){
+	
 	watchdirchannel := make(chan interface{}, 5)
 	result := false
+	//Registered the channel, hopefully we can
 	if watchdirchannel != nil {
 		result = util.RegisterChannel("watchdirchannel", watchdirchannel)
 	}
+	//Did we make it?
 	if ! result {
 		fmt.Println("Failed to register channel checking if one already exists")
 		watchdirchannel = util.GetChannel("watchdirchannel")
@@ -65,6 +73,7 @@ func checkForfile(){
 			fmt.Println("Success one was already here")
 		}
 	}
+	//Lets look though the dir over and over again. Hmmm I need to make this look in more dir then one
 	for {
 		_, err := os.Stat(watch_dir)
 		if os.IsNotExist(err) {
@@ -73,6 +82,7 @@ func checkForfile(){
 			fmt.Printf("Something went wrong trying to stat the path: %s\n", watch_dir)
 		}
 
+		//Lets look in the dir and see if there is a new file
 		files, err := ioutil.ReadDir(watch_dir)
 		for _, fil := range files {
 			//See if this is a torrnet file
@@ -86,6 +96,7 @@ func checkForfile(){
 				continue
 			}
 
+			//Send out a message saying there is a new file and where it is
 			fmt.Println("Sending the message to the channel")
 			watchdirchannel <- util.Event{Type: "new_torrent_file", Message: watch_dir + "/" + fil.Name()}
 			
@@ -95,12 +106,18 @@ func checkForfile(){
 	}
 }
 
+/**
+Load up the newly found file that has been sent though the channel
+*/
 func loadTorrentFile () {
+	//Let get the channel if we cant then nothing we can do
 	watchdirchannel := util.GetChannel("watchdirchannel")
 	if watchdirchannel == nil {
 		fmt.Printf("Failed to get channel dying")
 		return
 	}
+
+	//Lets load up any file that comes though the channel
 	for {
 		newevent := <- watchdirchannel
 		newfileevent := newevent.(util.Event)
@@ -109,11 +126,13 @@ func loadTorrentFile () {
 			continue
 		}
 
+		//A just in case lets stat it
 		_ , err := os.Stat(newfileevent.Message)
 		if err != nil{
 			fmt.Println("I cannot stat the file")
 		}
-		
+
+		//Open the file and do some shit with it
 		file, err := os.Open(newfileevent.Message)
 		defer file.Close()
 		
@@ -125,6 +144,7 @@ func loadTorrentFile () {
 
 		var b bytes.Buffer
 
+		//Decode the file
 		err = bencode.Marshal(&b, readableinfo)
 		util.CheckError(err)
 
@@ -136,6 +156,7 @@ func loadTorrentFile () {
 		err = bencode.Unmarshal(&b, &finalinfo.Info)
 		util.CheckError(err)
 
+		//This is all I know how to get out so far
 		finalinfo.InfoHash = string(hash.Sum(nil))
 		finalinfo.Announce = util.GetString(readableinfo, "announce")
 		finalinfo.AnnounceList = util.GetSliceString(readableinfo, "announce-list")
@@ -148,6 +169,9 @@ func loadTorrentFile () {
 	}
 }
 
+/**
+This handles communications with the clients, recieves messages and sends them to the right channels 
+*/
 func handleClient(conn net.Conn) {
 	// close connection on exit
 	defer conn.Close()

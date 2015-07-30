@@ -23,11 +23,11 @@ func main(){
 	fmt.Println("I have connected")
 
 	util.CheckError(err)
-
+//Thread these things
 	go util.SendMessage(conn)
 
 	go console.ClientConsole()
-
+//This reads a message from the server prints it and then dies. Yeah bad but it from the primodial soup code...
 	var buf [512]byte
 
 	fmt.Println("Reading...")
