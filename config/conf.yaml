@@ -1,0 +1,5 @@
+host: "127.0.0.1"
+watch_dir: "/home/$user/downloads"
+port: 4638
+watch_freq: 5
+cores: 2

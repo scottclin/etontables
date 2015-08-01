@@ -5,18 +5,19 @@ import (
 	"./util"
 	"runtime"
 	"./serverside"
+	"strconv"
+	"./config"
 )
 
-
 func main(){
-	runtime.GOMAXPROCS(2)
+	runtime.GOMAXPROCS(config.GetCores())
 	util.SetupRegister()
 
 	//Threads for file stuff I think is it the right way to go
 	go serverside.CheckForfile()
 	go serverside.LoadTorrentFile()
 	
-	tcpAddr, err := net.ResolveTCPAddr("tcp", ":4638")
+	tcpAddr, err := net.ResolveTCPAddr("tcp", ":" + strconv.Itoa(config.GetPort()))
 	util.CheckError(err)
 	
 	ln, err := net.ListenTCP("tcp", tcpAddr)

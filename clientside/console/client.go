@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"os"
 	"time"
-	"../../util"
+	"../../util"  // Is it wise to have relative imports? (GOPATH+= bootstrap?)
 )
 
 /**
 This is the beginings of the clientside console based interface no flashy GUI shit here. 
+Yay! Down with UI
 */
 
 func ClientConsole(){

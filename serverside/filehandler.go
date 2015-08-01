@@ -1,7 +1,7 @@
 package serverside
 
 import (
-	"github.com/jackpal/bencode-go"
+	"bencode-go"
 	"../util"
 	"../config"
 	"crypto/sha1"
@@ -27,7 +27,6 @@ func init(){
 	seen_torrent_files = make(map[string]bool)
 	watch_dir = config.GetWatchDir()
 	watch_duration = config.GetWatchFrequency()
-
 	fmt.Printf("Setup looking for files in %s\n", watch_dir)
 }
 
