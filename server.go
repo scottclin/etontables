@@ -9,9 +9,13 @@ import (
 	"./config"
 )
 
-func main(){
+func init() {
 	runtime.GOMAXPROCS(config.GetCores())
-	util.SetupRegister()
+	util.SetupRegister()		
+}
+
+func main(){
+
 
 	//Threads for file stuff I think is it the right way to go
 	go serverside.CheckForfile()

@@ -39,7 +39,6 @@ type MetaInfo struct{
 	Comment string
 	CreatedBy string `bencode:"created by"`
 	Encoding string
-	
 }
 type TorrentInfo struct{
 	PieceLength int64 `bencode:"piece length"`
@@ -71,7 +70,7 @@ func GetString(m map[string]interface{}, k string) string{
 	return ""
 }
 
-//Get the slice of strings I am looks for
+//Get the slice of strings I am looking for
 func GetSliceString(m map[string]interface{}, k string) (resultSlice [][]string){
 	v,ok := m[k]
 	if ok {

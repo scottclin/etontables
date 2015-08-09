@@ -17,9 +17,9 @@ func RegisterChannel(name string,channel chan interface{}) bool{
 	return true
 }
 
-func CheckForChannel(name string)bool {
-	_, ok := registeredChannels[name] 
-	return ok
+func CheckForChannel(name string) (ok bool) {
+	_, ok = registeredChannels[name] 
+	return 
 }
 
 //For getting the channel by name returns nil if no channel found
@@ -33,6 +33,10 @@ func GetChannel(name string) chan interface{}{
 	return nil
 }
 
-func RemoveChannel(name string){
-	delete(registeredChannels, name)
+func RemoveChannel(name string) bool {
+	if CheckForChannel(name) {
+		delete(registeredChannels, name)
+		return true
+	}
+	return false
 }

@@ -1,7 +1,7 @@
 package serverside
 
 import (
-	"bencode-go"
+	"github.com/jackpal/bencode-go"
 	"../util"
 	"../config"
 	"crypto/sha1"
@@ -33,8 +33,7 @@ func init(){
 /**
 Checks the folder for new files based which folders? are sent in the watchdir channel or in the config.
 */
-func CheckForfile(){
-	
+func CheckForfile(){	
 	watchdirchannel := make(chan interface{}, 5)
 	result := false
 	//Registered the channel, hopefully we can
@@ -44,6 +43,8 @@ func CheckForfile(){
 	//Did we make it?
 	if ! result {
 		fmt.Println("Failed to register channel checking if one already exists")
+		
+		
 		watchdirchannel = util.GetChannel("watchdirchannel")
 		if watchdirchannel == nil {
 			fmt.Println("Well that did not work, I will just do my thing without telling anything")

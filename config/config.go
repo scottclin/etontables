@@ -17,10 +17,9 @@ var conf Conf
 
 func init() {
 	content, err := ioutil.ReadFile("./conf.yaml")
-	if err != nil {
-		util.CheckError(err)
-	}
+	util.CheckError(err)
 	err = yaml.Unmarshal(content, &conf)
+	util.CheckError(err)
 	
 	if conf.cores < 1 {
 		conf.cores = runtime.NumCPU()
