@@ -25,11 +25,9 @@ func CheckForChannel(name string) (ok bool) {
 //For getting the channel by name returns nil if no channel found
 func GetChannel(name string) chan interface{}{
 	channel, ok := registeredChannels[name]
-	
 	if ok {
 		return channel
 	}
-
 	return nil
 }
 

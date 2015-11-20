@@ -16,7 +16,7 @@ import (
 
 //Vars for things
 var seen_torrent_files map[string]bool
-var watch_dir string
+var watch_dirs []string
 var watch_duration int
 
 /**
@@ -25,65 +25,58 @@ Initalise some settings
 
 func init(){
 	seen_torrent_files = make(map[string]bool)
-	watch_dir = config.GetWatchDir()
+	watch_dirs = config.GetWatchDirs()
 	watch_duration = config.GetWatchFrequency()
-	fmt.Printf("Setup looking for files in %s\n", watch_dir)
+	fmt.Printf("Setup looking for files in %s\n", watch_dirs)
 }
 
 /**
 Checks the folder for new files based which folders? are sent in the watchdir channel or in the config.
 */
+func scanDirForTorrents(watch_dir string, watchdirchannel chan interface{}) {
+	//Lets look in the dir and see if there is a new file
+	files, err := ioutil.ReadDir(watch_dir)
+	if err != nil {
+		fmt.Println("Error scanning dir:", watch_dir)
+		return
+	}
+	
+	for _, fil := range files {
+		if seen_torrent_files[fil.Name()] { //We have dealt with this torrent file before ignore
+			continue
+		}
+		
+		match, err := regexp.MatchString("torrent$", fil.Name()) // Is torrent file?
+		util.CheckError(err)
+		if match == false {
+			continue
+		}
+
+		//Send out a message saying there is a new file and where it is
+		fmt.Println("Sending the message to the channel")
+		watchdirchannel <- util.Event{Type: "new_torrent_file", Message: watch_dir + "/" + fil.Name()}
+		
+		seen_torrent_files[fil.Name()] = true		
+	}
+}
+
 func CheckForfile(){	
-	watchdirchannel := make(chan interface{}, 5)
-	result := false
-	//Registered the channel, hopefully we can
-	if watchdirchannel != nil {
-		result = util.RegisterChannel("watchdirchannel", watchdirchannel)
-	}
-	//Did we make it?
-	if ! result {
-		fmt.Println("Failed to register channel checking if one already exists")
-		
-		
-		watchdirchannel = util.GetChannel("watchdirchannel")
-		if watchdirchannel == nil {
-			fmt.Println("Well that did not work, I will just do my thing without telling anything")
-		}else{
-			fmt.Println("Success one was already here")
+	watchdirchannel := util.GetChannel("watchdirchannel")
+	if watchdirchannel == nil {
+		watchdirchannel = make(chan interface{}, 5)	
+		if !util.RegisterChannel("watchdirchannel", watchdirchannel) {
+			fmt.Println("Failed to register channel.")
 		}
 	}
-	//Lets look though the dir over and over again. Hmmm I need to make this look in more dir then one
+
 	for {
-		_, err := os.Stat(watch_dir)
-		if os.IsNotExist(err) {
-			fmt.Printf("The path %s does not exist\n", watch_dir)
-		}else if err != nil{
-			fmt.Printf("Something went wrong trying to stat the path: %s\n", watch_dir)
-		}
-
-		//Lets look in the dir and see if there is a new file
-		files, err := ioutil.ReadDir(watch_dir)
-		for _, fil := range files {
-			//See if this is a torrnet file
-			match, err  := regexp.MatchString("torrent$", fil.Name())
-
-			util.CheckError(err)
-			
-			if seen_torrent_files[fil.Name()] { //We have delt with this torrnet file before ignore
-				continue
-			}else if match == false { //Ignore if not a torrent file
-				continue
-			}
-
-			//Send out a message saying there is a new file and where it is
-			fmt.Println("Sending the message to the channel")
-			watchdirchannel <- util.Event{Type: "new_torrent_file", Message: watch_dir + "/" + fil.Name()}
-			
-			seen_torrent_files[fil.Name()] = true		
-		}
+		for _, watchdir := range watch_dirs {
+			scanDirForTorrents(watchdir, watchdirchannel)			
+		}	
 		time.Sleep(time.Duration(watch_duration) * time.Second)
 	}
 }
+
 
 /**
 Load up the newly found file that has been sent though the channel
@@ -105,16 +98,9 @@ func LoadTorrentFile () {
 			continue
 		}
 
-		//A just in case lets stat it
-		_ , err := os.Stat(newfileevent.Message)
-		if err != nil{
-			fmt.Println("I cannot stat the file")
-		}
-
 		//Open the file and do some shit with it
 		file, err := os.Open(newfileevent.Message)
 		defer file.Close()
-		
 		util.CheckError(err)
 
 		rawinfo, _ := bencode.Decode(file)

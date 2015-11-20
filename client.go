@@ -10,7 +10,6 @@ import (
 )
 
 func main(){
-
 	server_ip, err := net.ResolveTCPAddr("tcp", config.GetServerIP())
 	util.CheckError(err)
 	

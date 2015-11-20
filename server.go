@@ -15,9 +15,6 @@ func init() {
 }
 
 func main(){
-
-
-	//Threads for file stuff I think is it the right way to go
 	go serverside.CheckForfile()
 	go serverside.LoadTorrentFile()
 	
