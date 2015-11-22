@@ -3,14 +3,11 @@ package serverside
 import (
 	"../config"
 	"../util"
-	"bytes"
-	"crypto/sha1"
 	"fmt"
 	"github.com/anacrolix/torrent"
 	"io/ioutil"
 	"os"
 	"regexp"
-	"strings"
 	"time"
 )
 
@@ -18,6 +15,7 @@ import (
 var seenTorrentFiles map[string]bool
 var watchDirs []string
 var watchDuration int
+var loadFileChannel chan interface{}
 
 /**
 Initalise some settings
@@ -85,29 +83,17 @@ func CheckForfile() {
 Load up the newly found file that has been sent though the channel
 Sends for watching and mofication
 */
-func LoadTorrentFile(client *torrent.Client) {
-	//Let get the channel if we cant then nothing we can do
-	watchDirChannel := util.GetChannel("watchDirChannel")
-	if watchDirChannel == nil {
-		fmt.Fprintf(os.stderr, "Failed to get channel for watching a directory\n")
-		return
-	}
+func loadTorrentFile(client torrent.Client, torrentFileString string) torrent.Torrent{
 
 	//Lets load up any file that comes though the channel
-	for {
-		newEvent := <-watchDirChannel
-		newFileEvent := newEvent.(util.Event)
-		fmt.Printf("An event was recieved: %s %s\n", newFileEvent.Type, newFileEvent.Message)
-		if newFileEvent.Type != "new_torrent_file" {
-			continue
-		}
 
-		if _, err := os.Stat(newFileEvent.Message); os.IsNotExist(err) {
-			fmt.Fprintf(os.Stderr, "The file handler was unable to stat the file: %s\n", newFileEvent.Message)
-		}
-
-		torrentFile, err := torrent.AddTorrentFromFile(newFileEvent.Message)
-
-		util.CheckError(err)
+	if _, err := os.Stat(torrentFileString); os.IsNotExist(err) {
+		fmt.Fprintf(os.Stderr, "The file handler was unable to stat the file: %s\n", torrentFileString)
 	}
+
+	torrentFile, err := client.AddTorrentFromFile(torrentFileString)
+
+	util.CheckError(err)
+
+	return torrentFile
 }

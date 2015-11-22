@@ -8,8 +8,10 @@ import (
 /**
 Load a magnet and send to be watched and modified
 */
-func LoadTorrentMagnet(client *torrent.Client, magnet string) {
+func loadTorrentMagnet(client torrent.Client, magnet string) torrent.Torrent {
 	torrentMagnet, err := client.AddMagnet(magnet)
 
 	util.CheckError(err)
+
+	return torrentMagnet
 }

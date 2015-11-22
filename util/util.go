@@ -29,38 +29,6 @@ func CheckError(err error){
 	}
 }
 
-//Get the string I am looking for 
-func GetString(m map[string]interface{}, k string) string{
-	v,ok := m[k]
-	if ok {
-		s, ok := v.(string)
-		if ok {
-			return s
-		}
-	}
-	return ""
-}
-
-//Get the slice of strings I am looking for
-func GetSliceString(m map[string]interface{}, k string) (resultSlice [][]string){
-	v,ok := m[k]
-	if ok {
-		w, _ := v.([]interface{})
-		for _, x := range w {
-			var stringSlice []string
-			y := x.([]interface{})
-			for _, z := range y {
-				a, ok := z.(string)
-				if ok {
-					stringSlice = append(stringSlice, a)
-				}				
-			}
-			resultSlice = append(resultSlice, stringSlice)
-		}		
-	}
-	return
-}
-
 /*
 Will flesh out later into something more useful later or write another one to be more useful.
 */

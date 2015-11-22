@@ -1,7 +1,6 @@
 package config
 
 import (
-	"code.google.com/p/gcfg"
 	"strconv"
 	"io/ioutil"
 	"../util"
@@ -9,6 +8,7 @@ import (
 	"os/user"
 	"fmt"
 	"strings"
+	"gopkg.in/yaml.v2"
 )
 
 type Conf struct { // This can be split into sections see https://code.google.com/p/gcfg/

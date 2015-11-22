@@ -18,7 +18,6 @@ func main() {
 	client := serverside.Start()
 
 	go serverside.CheckForfile()
-	go serverside.LoadTorrentFile(client)
 	go serverside.Control(client)
 
 	tcpAddr, err := net.ResolveTCPAddr("tcp", ":"+strconv.Itoa(config.GetPort()))
