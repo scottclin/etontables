@@ -1,15 +1,14 @@
 package serverside
 
 import (
-	"net"
+	"../util"
 	"encoding/json"
 	"fmt"
-	"../util"
+	"net"
 )
 
-
 /**
-This handles communications with the clients, recieves messages and sends them to the right channels 
+This handles communications with the clients, recieves messages and sends them to the right channels
 */
 func HandleClient(conn net.Conn) {
 	// close connection on exit
@@ -27,11 +26,13 @@ func HandleClient(conn net.Conn) {
 		_, err := conn.Write([]byte("Message received"))
 
 		switch m.Tag {
-		case "set_watch_folder": watch_dir := m.Info
-			fmt.Printf("Set the watch dir to be %s\n", watch_dir)
-		default: fmt.Printf("Unreconised tag sent: %s\n", m.Tag)
+		case "set_watch_folder":
+			watchDir := m.Info
+			fmt.Printf("Set the watch dir to be %s\n", watchDir)
+		default:
+			fmt.Printf("Unreconised tag sent: %s\n", m.Tag)
 		}
 		util.CheckError(err)
-				
+
 	}
 }
