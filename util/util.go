@@ -21,35 +21,6 @@ type Message struct{
 type Event struct{
 	Type, Message string
 }
-type InfoStruct struct{
-	PieceLength int64 `bencode:"piece lenght"`
-	Pieces string
-	Private int64
-	Name string
-	Length int64
-	Md5sum string
-	Files []FileStruct
-}
-type MetaInfo struct{
-	Info InfoStruct
-	InfoHash string
-	Announce string
-	AnnounceList [][]string `bencode:"announce-list"`
-	CreationDate string `bencode:"creation date"`
-	Comment string
-	CreatedBy string `bencode:"created by"`
-	Encoding string
-}
-type TorrentInfo struct{
-	PieceLength int64 `bencode:"piece length"`
-	Pieces, Md5sum string
-	Files []FileStruct
-}
-type FileStruct struct{
-	Length int64
-	Path []string
-	Md5sum string
-}
 //Helper to check and throw an error if required
 func CheckError(err error){
 	if err != nil {

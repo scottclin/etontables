@@ -1,30 +1,33 @@
 package main
 
 import (
-	"net"
-	"./util"
-	"runtime"
-	"./serverside"
-	"strconv"
 	"./config"
+	"./serverside"
+	"./util"
+	"net"
+	"runtime"
+	"strconv"
 )
 
 func init() {
 	runtime.GOMAXPROCS(config.GetCores())
-	util.SetupRegister()		
+	util.SetupRegister()
 }
 
-func main(){
+func main() {
+	client := serverside.Start()
+
 	go serverside.CheckForfile()
-	go serverside.LoadTorrentFile()
-	
-	tcpAddr, err := net.ResolveTCPAddr("tcp", ":" + strconv.Itoa(config.GetPort()))
+	go serverside.LoadTorrentFile(client)
+	go serverside.Control(client)
+
+	tcpAddr, err := net.ResolveTCPAddr("tcp", ":"+strconv.Itoa(config.GetPort()))
 	util.CheckError(err)
-	
+
 	ln, err := net.ListenTCP("tcp", tcpAddr)
 
 	util.CheckError(err)
-	
+
 	for {
 		conn, err := ln.Accept()
 
@@ -34,5 +37,5 @@ func main(){
 
 		go serverside.HandleClient(conn)
 	}
-}
 
+}
