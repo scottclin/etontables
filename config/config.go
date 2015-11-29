@@ -6,6 +6,7 @@ import (
 	"../util"
 	"runtime"
 	"os/user"
+	"os"
 	"fmt"
 	"strings"
 	"gopkg.in/yaml.v2"
@@ -36,9 +37,9 @@ func init() {
 		
 		tmp := make([]string, len(conf.watch_dirs))
 		for i, s := range conf.watch_dirs {
-			tmp[i] = strings.Replace(s, "$user", usr.Username, -1)
-			if !util.IsDir(tmp[i]) {
-				fmt.Printf("Watch dir %s not found.", tmp[i])
+			tmp[i] = strings.Replace(s, "$user", usr.Username, -1)			
+			if info, _ := os.Stat(tmp[i]); ! info.IsDir() {
+				fmt.Printf("Watch dir %s not found/not a dir.", tmp[i])
 			}
 		}
 		conf.watch_dirs = tmp	

@@ -49,29 +49,3 @@ func SendMessage (connection net.Conn){
 		enc.Encode(m)
 	}
 }
-
-func Exists(filepath string) bool {
-    _, err := os.Stat(filepath)
-    if err != nil {
-		if  os.IsNotExist(err) {
-			return false
-		} else {
-			fmt.Println("Something went wrong with dir:", filepath)
-    		return false
-		}
-    }
-	return true
-}
-
-func IsDir(filepath string) bool { //Sort of like, "Exists && IsDir"
-    src, err := os.Stat(filepath)
-    if err != nil {
-		if  os.IsNotExist(err) {
-			return false
-		} else {
-			fmt.Println("Something went wrong with dir:", filepath)
-    		return false
-		}
-    }
-	return src.IsDir()		
-}

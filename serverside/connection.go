@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	"os"
 )
 
 /**
@@ -13,6 +14,12 @@ This handles communications with the clients, recieves messages and sends them t
 func HandleClient(conn net.Conn) {
 	// close connection on exit
 	defer conn.Close()
+
+	//Get user action channel
+	userEventChannel := util.GetChannel("userEventChannel")
+	if userEventChannel == nil {
+		fmt.Fprintf(os.Stderr, "Failed to get the userEventChannel, I think it should exist.\n")
+	}
 
 	dec := json.NewDecoder(conn)
 	for {
@@ -26,11 +33,13 @@ func HandleClient(conn net.Conn) {
 		_, err := conn.Write([]byte("Message received"))
 
 		switch m.Tag {
-		case "set_watch_folder":
-			watchDir := m.Info
-			fmt.Printf("Set the watch dir to be %s\n", watchDir)
+		case "get_info":
+			fmt.Printf("Asked for info, sending....\n")
+			
+			fmt.Printf("Info sent\n")			
 		default:
-			fmt.Printf("Unreconised tag sent: %s\n", m.Tag)
+			userEventChannel <- util.Event{Type: m.Tag, Message: m.Info}
+			fmt.Printf("Event recieved: %s\n", m.Tag)
 		}
 		util.CheckError(err)
 
