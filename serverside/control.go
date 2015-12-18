@@ -21,21 +21,19 @@ func Control(client torrent.Client){
 	for {
 		select {
 		case mesg := <- userEventChannel:
-			newUserAction := mesg.(util.Event)
-			switch newUserAction.Type {
+			switch mesg.Type {
 			case "magnet":
-				tor := loadTorrentMagnet(client, newUserAction.Message)
+				tor := loadTorrentMagnet(client, mesg.Message)
 				<- tor.GotInfo()
 			case "start", "kill":
-				result := actionOnTorrent(client, newUserAction.Message, newUserAction.Type)
+				result := actionOnTorrent(client, mesg.Message, mesg.Type)
 				if ! result {
-					fmt.Fprint(os.Stderr, "Failed to find torrent %s", newUserAction.Message)
+					fmt.Fprint(os.Stderr, "Failed to find torrent %s", mesg.Message)
 				}				
 			}
 		case mesg2 := <- watchDirChannel:
-			newFile := mesg2.(util.Event)
-			if newFile.Type == "new_torrent_file"{
-				tor := loadTorrentFile(client, newFile.Message)
+			if mesg2.Type == "new_torrent_file"{
+				tor := loadTorrentFile(client, mesg2.Message)
 				<- tor.GotInfo()
 			}
 		}

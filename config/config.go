@@ -58,8 +58,8 @@ func GetServerIP() string {
 	return conf.host + ":" + strconv.Itoa(conf.port)
 }
 
-func GetWatchDirs() []string {
-	return conf.watch_dirs //TODO: Set to current dir // Really? 
+func GetWatchDirs() []string { 
+	return conf.watch_dirs 
 }
 
 func GetWatchFrequency() int {

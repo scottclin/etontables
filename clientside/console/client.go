@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"time"
+	//	"time"
 	"../../util"  // Is it wise to have relative imports? (GOPATH+= bootstrap?)
 )
 
@@ -30,7 +30,7 @@ func ClientConsole(){
 		util.CheckError(err)
 
 		//Create the message to send to the server using the message struct which is shared as it in the util
-		m := util.Message{Host: "local", Id: "local:" + time.Now().String(), Level: 0, Info: userinfo, Tag: usertag}
+		m := util.Event{Type: "Message", Message: userinfo + usertag}
 
 		//Send the message to the channel so the thread can pick it up and send it
 		messagechannel <- m

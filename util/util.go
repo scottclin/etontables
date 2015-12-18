@@ -34,10 +34,10 @@ Will flesh out later into something more useful later or write another one to be
 */
 
 func SendMessage (connection net.Conn){
-	var messagechannel chan interface{}
+	var messagechannel chan Event
 	
 	if CheckForChannel("messagechannel") {
-		messagechannel = make(chan interface{}, 10)
+		messagechannel = make(chan Event, 10)
 		RegisterChannel("messagechannel", messagechannel)
 	}else{
 		messagechannel =  GetChannel("messagechannel")
