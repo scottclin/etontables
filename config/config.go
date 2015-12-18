@@ -59,7 +59,7 @@ func GetServerIP() string {
 }
 
 func GetWatchDirs() []string {
-	return conf.watch_dirs //TODO: Set to current dir // Really? 
+	return conf.watch_dirs 
 }
 
 func GetWatchFrequency() int {

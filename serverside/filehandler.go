@@ -32,7 +32,7 @@ func init() {
 /**
 Checks the folder for new files based which folders? are sent in the watchdir channel or in the config.
 */
-func scanDirForTorrents(watchDir string, watchDirChannel chan interface{}) {
+func scanDirForTorrents(watchDir string, watchDirChannel chan util.Event) {
 	//Lets look in the dir and see if there is a new file
 	files, err := ioutil.ReadDir(watchDir)
 	if err != nil {
@@ -65,7 +65,7 @@ Checks to see if a new file has appeared, keeps track of the files we know about
 func CheckForfile() {
 	watchDirChannel := util.GetChannel("watchDirChannel")
 	if watchDirChannel == nil {
-		watchDirChannel = make(chan interface{}, 5)
+		watchDirChannel = make(chan util.Event, 5)
 		if !util.RegisterChannel("watchDirChannel", watchDirChannel) {
 			fmt.Println("Failed to register channel.")
 		}
