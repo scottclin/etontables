@@ -29,6 +29,8 @@ func CheckError(err error){
 	}
 }
 
+//Const messages to be sent around so it easier to refactor
+
 /*
 Will flesh out later into something more useful later or write another one to be more useful.
 */

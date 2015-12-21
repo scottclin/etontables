@@ -30,6 +30,32 @@ func init() {
 }
 
 /**
+Remove a watch dir
+*/
+
+func RemoveWatchDir(dirToRemove string)bool{
+	returnBool = false
+	
+	for index, item := range watchDirs {
+		//Just in case of duplicates as this is not a set and we do no checking for this
+		if dirToRemove == item {
+			watchDirs = append(watchDirs[:index], watchDirs[index + 1])
+			returnBool = true
+		}
+	}
+
+	return returnBool
+}
+
+/**
+Add a watch dir
+*/
+func AddWatchDir(dirToAdd string){
+	watchDirs.append(dirToAdd)
+}
+
+
+/**
 Checks the folder for new files based which folders? are sent in the watchdir channel or in the config.
 */
 func scanDirForTorrents(watchDir string, watchDirChannel chan util.Event) {

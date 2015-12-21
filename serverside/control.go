@@ -29,7 +29,15 @@ func Control(client torrent.Client){
 				result := actionOnTorrent(client, mesg.Message, mesg.Type)
 				if ! result {
 					fmt.Fprint(os.Stderr, "Failed to find torrent %s", mesg.Message)
-				}				
+				}
+			case "add_dir":
+				AddWatchDir(mesg.Message)
+			case "remove_dir":
+				result := RemoveWatchDir(mesg.Message)
+				if ! result {
+					fmt.Fprint(os.Stderr, "Failed to remove directory %s", mesg.Message)
+				}
+				
 			}
 		case mesg2 := <- watchDirChannel:
 			if mesg2.Type == "new_torrent_file"{
