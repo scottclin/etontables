@@ -12,7 +12,10 @@ func Control(client torrent.Client){
 	watchDirChannel := util.GetChannel("watchDirChannel")
 	
 	if userEventChannel == nil {
-		fmt.Fprintf(os.Stderr, "Failed to get the userEventChannel, I think it should exist.\n")
+		*userEventChannel = make(chan util.Event, 5)
+		if !util.RegisterChannel("userEventChannel", userEventChannel) {
+			fmt.Println("Failed to create user event channel.")
+		}
 	}
 	if watchDirChannel == nil {
 		fmt.Fprintf(os.Stderr, "Failed to get the watchDirChannel, I think it should exist.\n")
