@@ -17,6 +17,7 @@ func init() {
 func main() {
 	client := serverside.Start()
 
+	go serverside.InfoStart()
 	go serverside.CheckForfile()
 	go serverside.Control(client)
 
