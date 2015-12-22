@@ -34,7 +34,7 @@ Remove a watch dir
 */
 
 func RemoveWatchDir(dirToRemove string)bool{
-	returnBool = false
+	returnBool := false
 	
 	for index, item := range watchDirs {
 		//Just in case of duplicates as this is not a set and we do no checking for this
@@ -51,7 +51,7 @@ func RemoveWatchDir(dirToRemove string)bool{
 Add a watch dir
 */
 func AddWatchDir(dirToAdd string){
-	watchDirs.append(dirToAdd)
+	watchDirs = append(watchDirs, dirToAdd)
 }
 
 
@@ -91,7 +91,7 @@ Checks to see if a new file has appeared, keeps track of the files we know about
 func CheckForfile() {
 	watchDirChannel := util.GetChannel("watchDirChannel")
 	if watchDirChannel == nil {
-		watchDirChannel = make(chan util.Event, 5)
+		*watchDirChannel = make(chan util.Event, 5)
 		if !util.RegisterChannel("watchDirChannel", watchDirChannel) {
 			fmt.Println("Failed to register channel.")
 		}
@@ -99,7 +99,7 @@ func CheckForfile() {
 
 	for {
 		for _, watchdir := range watchDirs {
-			scanDirForTorrents(watchdir, watchDirChannel)
+			scanDirForTorrents(watchdir, *watchDirChannel)
 		}
 		time.Sleep(time.Duration(watchDuration) * time.Second)
 	}

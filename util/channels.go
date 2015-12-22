@@ -1,14 +1,14 @@
 package util
 
-var registeredChannels map[string] chan Event
+var registeredChannels map[string] *chan Event
 
 //Setup for keeping a register of channels
 func SetupRegister(){
-	registeredChannels = make(map[string] chan Event)
+	registeredChannels = make(map[string] *chan Event)
 }
 
 //Adds the channel to the map returns false if one already exists with that name
-func RegisterChannel(name string,channel chan Event) bool{
+func RegisterChannel(name string,channel *chan Event) bool{
 	if _, ok := registeredChannels[name]; ok {
 		return false
 	}
@@ -23,7 +23,7 @@ func CheckForChannel(name string) (ok bool) {
 }
 
 //For getting the channel by name returns nil if no channel found
-func GetChannel(name string) chan Event{
+func GetChannel(name string) *chan Event{
 	channel, ok := registeredChannels[name]
 	if ok {
 		return channel

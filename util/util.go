@@ -30,7 +30,14 @@ func CheckError(err error){
 }
 
 //Const messages to be sent around so it easier to refactor
-
+const (
+	NewTorrentMagnet = "new_torrent_magnet"
+	Start = "start"
+	Kill = "kill"
+	AddWatchDir = "add_dir"
+	RemoveWatchDir = "remove_dir"
+	NewTorrentFile = "new_torrent_file"
+)
 /*
 Will flesh out later into something more useful later or write another one to be more useful.
 */
@@ -40,9 +47,9 @@ func SendMessage (connection net.Conn){
 	
 	if CheckForChannel("messagechannel") {
 		messagechannel = make(chan Event, 10)
-		RegisterChannel("messagechannel", messagechannel)
+		RegisterChannel("messagechannel", &messagechannel)
 	}else{
-		messagechannel =  GetChannel("messagechannel")
+		messagechannel = *GetChannel("messagechannel")
 	}
 	
 	for {

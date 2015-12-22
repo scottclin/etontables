@@ -38,7 +38,7 @@ func HandleClient(conn net.Conn) {
 			
 			fmt.Printf("Info sent\n")			
 		default:
-			userEventChannel <- util.Event{Type: m.Tag, Message: m.Info}
+			*userEventChannel <- util.Event{Type: m.Tag, Message: m.Info}
 			fmt.Printf("Event recieved: %s\n", m.Tag)
 		}
 		util.CheckError(err)

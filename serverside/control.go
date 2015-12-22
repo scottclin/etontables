@@ -20,27 +20,27 @@ func Control(client torrent.Client){
 
 	for {
 		select {
-		case mesg := <- userEventChannel:
+		case mesg := <- *userEventChannel:
 			switch mesg.Type {
-			case "magnet":
+			case util.NewTorrentMagnet:
 				tor := loadTorrentMagnet(client, mesg.Message)
 				<- tor.GotInfo()
-			case "start", "kill":
+			case util.Start, util.Kill:
 				result := actionOnTorrent(client, mesg.Message, mesg.Type)
 				if ! result {
 					fmt.Fprint(os.Stderr, "Failed to find torrent %s", mesg.Message)
 				}
-			case "add_dir":
+			case util.AddWatchDir :
 				AddWatchDir(mesg.Message)
-			case "remove_dir":
+			case util.RemoveWatchDir :
 				result := RemoveWatchDir(mesg.Message)
 				if ! result {
 					fmt.Fprint(os.Stderr, "Failed to remove directory %s", mesg.Message)
 				}
 				
 			}
-		case mesg2 := <- watchDirChannel:
-			if mesg2.Type == "new_torrent_file"{
+		case mesg2 := <- *watchDirChannel:
+			if mesg2.Type == util.NewTorrentFile {
 				tor := loadTorrentFile(client, mesg2.Message)
 				<- tor.GotInfo()
 			}
@@ -54,10 +54,10 @@ func actionOnTorrent(client torrent.Client,torrentName string, action string)boo
 	for _, torrent := range allTorrents{
 		if torrent.Name() == torrentName {
 			switch action {
-			case "start":
+			case util.Start:
 				torrent.DownloadAll()
 				return true
-			case "kill":
+			case util.Kill:
 				torrent.Drop()
 				return true
 			}
