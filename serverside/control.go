@@ -20,7 +20,7 @@ func Control(client torrent.Client){
 
 	for {
 		select {
-		case mesg := <- userEventChannel:
+		case mesg := <- *userEventChannel:
 			switch mesg.Type {
 			case util.NewTorrentMagnet:
 				tor := loadTorrentMagnet(client, mesg.Message)
@@ -39,7 +39,7 @@ func Control(client torrent.Client){
 				}
 				
 			}
-		case mesg2 := <- watchDirChannel:
+		case mesg2 := <- *watchDirChannel:
 			if mesg2.Type == util.NewTorrentFile {
 				tor := loadTorrentFile(client, mesg2.Message)
 				<- tor.GotInfo()

@@ -34,8 +34,8 @@ const (
 	NewTorrentMagnet = "new_torrent_magnet"
 	Start = "start"
 	Kill = "kill"
-	AddDir = "add_dir"
-	RemoveDir = "remove_dir"
+	AddWatchDir = "add_dir"
+	RemoveWatchDir = "remove_dir"
 	NewTorrentFile = "new_torrent_file"
 )
 /*
@@ -47,9 +47,9 @@ func SendMessage (connection net.Conn){
 	
 	if CheckForChannel("messagechannel") {
 		messagechannel = make(chan Event, 10)
-		RegisterChannel("messagechannel", messagechannel)
+		RegisterChannel("messagechannel", &messagechannel)
 	}else{
-		messagechannel =  GetChannel("messagechannel")
+		messagechannel = *GetChannel("messagechannel")
 	}
 	
 	for {
