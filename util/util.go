@@ -30,7 +30,14 @@ func CheckError(err error){
 }
 
 //Const messages to be sent around so it easier to refactor
-
+const (
+	NewTorrentMagnet = "new_torrent_magnet"
+	Start = "start"
+	Kill = "kill"
+	AddDir = "add_dir"
+	RemoveDir = "remove_dir"
+	NewTorrentFile = "new_torrent_file"
+)
 /*
 Will flesh out later into something more useful later or write another one to be more useful.
 */
